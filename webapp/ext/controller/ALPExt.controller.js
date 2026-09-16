@@ -11,8 +11,13 @@ sap.ui.define([
 	return Controller.extend("mindtek.journalentry.monitor.ext.controller.ALPExt", {
 		onInit: function () {
 			this.getView().addEventDelegate({
-				onAfterRendering: this._attachNoDataIllustration.bind(this)
+				onAfterRendering: this._enhanceTable.bind(this)
 			});
+		},
+
+		_enhanceTable: function () {
+			this._attachNoDataIllustration();
+			this._enableClientExcelExport();
 		},
 
 		_attachNoDataIllustration: function () {
@@ -40,6 +45,40 @@ sap.ui.define([
 			return this.getView().findAggregatedObjects(true, function (oControl) {
 				return oControl.isA && oControl.isA("sap.ui.comp.smarttable.SmartTable");
 			})[0];
+		},
+
+		_enableClientExcelExport: function () {
+			var oSmartTable = this._findSmartTable();
+			if (!oSmartTable || oSmartTable.data("jemExcelFix")) {
+				return;
+			}
+			oSmartTable.attachBeforeExport(function (oEvent) {
+				var oSettings = oEvent.getParameter("exportSettings");
+				if (!oSettings) {
+					return;
+				}
+				oSettings.worker = false;
+				var oTable = oSmartTable.getTable();
+				var oBinding = oTable && (oTable.getBinding("items") || oTable.getBinding("rows"));
+				if (!oBinding) {
+					return;
+				}
+				var aContexts = [];
+				var iLength = oBinding.getLength && oBinding.getLength();
+				if (typeof oBinding.getContexts === "function") {
+					aContexts = oBinding.getContexts(0, iLength || 0) || [];
+				}
+				if (!aContexts.length && typeof oBinding.getAllCurrentContexts === "function") {
+					aContexts = oBinding.getAllCurrentContexts() || [];
+				}
+				var aRows = aContexts.map(function (oCtx) {
+					return oCtx.getObject();
+				});
+				if (aRows.length) {
+					oSettings.dataSource = aRows;
+				}
+			});
+			oSmartTable.data("jemExcelFix", true);
 		},
 
 		onExportPdf: function () {
