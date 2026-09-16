@@ -1,0 +1,167 @@
+{
+	"_version": "1.76.0",
+	"sap.app": {
+		"id": "mindtek.journalentry.monitor",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"dataSources": {
+			"mainService": {
+				"uri": "/sap/opu/odata/sap/API_JOURNALENTRYITEMBASIC_SRV/",
+				"type": "OData",
+				"settings": {
+					"annotations": ["localAnnotations"],
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"localAnnotations": {
+				"uri": "annotations/annotations.xml",
+				"type": "ODataAnnotation",
+				"settings": {
+					"localUri": "annotations/annotations.xml"
+				}
+			}
+		},
+		"offline": false,
+		"resources": "resources.json",
+		"sourceTemplate": {
+			"id": "ui5template.smartTemplate"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://accounting-document-verification"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"fullWidth": true
+	},
+	"sap.ui5": {
+		"flexEnabled": true,
+		"dependencies": {
+			"minUI5Version": "1.136.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ui.comp": {},
+				"sap.ui.generic.app": {},
+				"sap.suite.ui.generic.template": {},
+				"sap.ui.table": {},
+				"sap.uxap": {},
+				"sap.ui.export": {},
+				"sap.viz": {},
+				"sap.ui.fl": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "mindtek.journalentry.monitor.i18n.i18n"
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Inline",
+					"operationMode": "Client",
+					"useBatch": false,
+					"earlyRequests": false
+				}
+			}
+		},
+		"extends": {
+			"extensions": {
+				"sap.ui.controllerExtensions": {
+					"sap.suite.ui.generic.template.AnalyticalListPage.view.AnalyticalListPage": {
+						"controllerName": "mindtek.journalentry.monitor.ext.controller.ALPExt",
+						"sap.ui.generic.app": {
+							"A_JournalEntryItemBasic": {
+								"EntitySet": "A_JournalEntryItemBasic",
+								"Header": {
+									"Actions": {
+										"ExportPDF": {
+											"id": "exportPdfButton",
+											"text": "{i18n>exportPdf}",
+											"press": "onExportPdf",
+											"requiresSelection": false,
+											"determining": true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"sap.ui.generic.app": {
+		"pages": {
+			"AnalyticalListPage|A_JournalEntryItemBasic": {
+				"entitySet": "A_JournalEntryItemBasic",
+				"component": {
+					"name": "sap.suite.ui.generic.template.AnalyticalListPage",
+					"list": true,
+					"settings": {
+						"qualifier": "AlpDefault",
+						"defaultFilterMode": "compact",
+						"autoHide": false,
+						"showGoButtonOnFilterBar": true,
+						"smartVariantManagement": true,
+						"defaultContentView": "charttable",
+						"multiSelect": true,
+						"tableType": "ResponsiveTable",
+						"condensedTableLayout": true,
+						"enableTableFilterInPageVariant": true,
+						"keyPerformanceIndicators": {
+							"TotalAmount": {
+								"model": "",
+								"entitySet": "A_JournalEntryItemBasic",
+								"qualifier": "KPITotalAmount"
+							},
+							"GlobalAmount": {
+								"model": "",
+								"entitySet": "A_JournalEntryItemBasic",
+								"qualifier": "KPIGlobalAmount"
+							}
+						}
+					}
+				},
+				"pages": {
+					"ObjectPage|A_JournalEntryItemBasic": {
+						"entitySet": "A_JournalEntryItemBasic",
+						"component": {
+							"name": "sap.suite.ui.generic.template.ObjectPage",
+							"settings": {
+								"editableHeaderContent": false,
+								"showRelatedApps": false
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"sap.fiori": {
+		"registrationIds": [],
+		"archeType": "analytical"
+	}
+}

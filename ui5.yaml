@@ -1,0 +1,28 @@
+specVersion: "3.1"
+metadata:
+  name: mindtek.journalentry.monitor
+type: application
+framework:
+  name: SAPUI5
+  version: "1.136.0"
+  libraries:
+    - name: sap.ui.core
+    - name: sap.m
+    - name: sap.f
+    - name: sap.ui.layout
+    - name: sap.ui.comp
+    - name: sap.ui.generic.app
+    - name: sap.suite.ui.generic.template
+    - name: sap.ui.table
+    - name: sap.uxap
+    - name: sap.ui.export
+    - name: sap.viz
+    - name: sap.ui.fl
+    - name: themelib_sap_horizon
+server:
+  customMiddleware:
+    - name: ui5-middleware-livereload
+      afterMiddleware: compression
+      configuration:
+        extraExts: "xml,json,properties"
+        watchPath: "webapp"

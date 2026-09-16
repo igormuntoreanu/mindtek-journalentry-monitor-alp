@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Measures.xml">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="../localService/metadata.xml">
+		<edmx:Include Namespace="API_JOURNALENTRYITEMBASIC_SRV" Alias="SAP"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="local.annotations" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Journal Entry Item"/>
+						<PropertyValue Property="TypeNamePlural" String="Journal Entry Items"/>
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Value" Path="ID"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record>
+								<PropertyValue Property="Value" Path="GLAccountName"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>CompanyCode</PropertyPath>
+						<PropertyPath>LedgerFiscalYear</PropertyPath>
+						<PropertyPath>FiscalYearPeriod</PropertyPath>
+						<PropertyPath>CostCenter</PropertyPath>
+						<PropertyPath>ProfitCenter</PropertyPath>
+						<PropertyPath>GLAccount</PropertyPath>
+						<PropertyPath>Ledger</PropertyPath>
+					</Collection>
+				</Annotation>
+
+				<Annotation Term="UI.DataPoint" Qualifier="AmountCompanyCode">
+					<Record>
+						<PropertyValue Property="Value" Path="AmountInCompanyCodeCurrency"/>
+						<PropertyValue Property="Title" String="Amount in Company Code Currency"/>
+						<PropertyValue Property="CriticalityCalculation">
+							<Record>
+								<PropertyValue Property="ImprovementDirection" EnumMember="UI.ImprovementDirectionType/Maximize"/>
+								<PropertyValue Property="DeviationRangeLowValue" Decimal="0"/>
+								<PropertyValue Property="ToleranceRangeLowValue" Decimal="0"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.DataPoint" Qualifier="KPITotalAmount">
+					<Record>
+						<PropertyValue Property="Value" Path="AmountInGlobalCurrency"/>
+						<PropertyValue Property="Title" String="Posted amount (GBP)"/>
+						<PropertyValue Property="ValueFormat">
+							<Record>
+								<PropertyValue Property="NumberOfFractionalDigits" Int="2"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.DataPoint" Qualifier="KPIGlobalAmount">
+					<Record>
+						<PropertyValue Property="Value" Path="AmountInGlobalCurrency"/>
+						<PropertyValue Property="Title" String="Posted amount (GBP)"/>
+						<PropertyValue Property="ValueFormat">
+							<Record>
+								<PropertyValue Property="NumberOfFractionalDigits" Int="2"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ID"/>
+							<PropertyValue Property="Label" String="Journal Entry Item"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="FiscalYearPeriod"/>
+							<PropertyValue Property="Label" String="Fiscal Year Period"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="GLAccount"/>
+							<PropertyValue Property="Label" String="G/L Account"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CostCenter"/>
+							<PropertyValue Property="Label" String="Cost Center"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ProfitCenter"/>
+							<PropertyValue Property="Label" String="Profit Center"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ControllingDebitCreditCode"/>
+							<PropertyValue Property="Label" String="Debit / Credit"/>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#AmountCompanyCode"/>
+							<PropertyValue Property="Label" String="Amount in Company Code Currency"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="AmountInTransactionCurrency"/>
+							<PropertyValue Property="Label" String="Amount in Transaction Currency"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="JrnlEntryItemObsoleteReason"/>
+							<PropertyValue Property="Label" String="Obsolete / Reversed"/>
+							<PropertyValue Property="Criticality" Path="JrnlEntryItemObsoleteReason"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+					</Collection>
+				</Annotation>
+
+				<Annotation Term="UI.Chart" Qualifier="ByGLAccount">
+					<Record>
+						<PropertyValue Property="Title" String="Amount by G/L Account"/>
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Column"/>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>GLAccount</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension" PropertyPath="GLAccount"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>AmountInGlobalCurrency</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure" PropertyPath="AmountInGlobalCurrency"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+									<PropertyValue Property="DataPoint" AnnotationPath="@UI.DataPoint#KPIGlobalAmount"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.Chart" Qualifier="ByCostCenter">
+					<Record>
+						<PropertyValue Property="Title" String="Amount by Cost Center"/>
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Bar"/>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>CostCenter</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>AmountInGlobalCurrency</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure" PropertyPath="AmountInGlobalCurrency"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.PresentationVariant" Qualifier="AlpDefault">
+					<Record>
+						<PropertyValue Property="Text" String="By G/L Account"/>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#ByGLAccount</AnnotationPath>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="Common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="FiscalYearPeriod"/>
+									<PropertyValue Property="Descending" Bool="true"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.PresentationVariant" Qualifier="ByCostCenter">
+					<Record>
+						<PropertyValue Property="Text" String="By Cost Center"/>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#ByCostCenter</AnnotationPath>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.SelectionVariant" Qualifier="All">
+					<Record>
+						<PropertyValue Property="Text" String="All items"/>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.SelectionVariant" Qualifier="Reversed">
+					<Record>
+						<PropertyValue Property="Text" String="Reversed items"/>
+						<PropertyValue Property="SelectOptions">
+							<Collection>
+								<Record Type="UI.SelectOptionType">
+									<PropertyValue Property="PropertyName" PropertyPath="JrnlEntryItemObsoleteReason"/>
+									<PropertyValue Property="Ranges">
+										<Collection>
+											<Record Type="UI.SelectionRangeType">
+												<PropertyValue Property="Sign" EnumMember="UI.SelectionRangeSignType/I"/>
+												<PropertyValue Property="Option" EnumMember="UI.SelectionRangeOptionType/EQ"/>
+												<PropertyValue Property="Low" String="W"/>
+											</Record>
+										</Collection>
+									</PropertyValue>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.SelectionPresentationVariant" Qualifier="AlpDefault">
+					<Record>
+						<PropertyValue Property="Text" String="By G/L Account"/>
+						<PropertyValue Property="SelectionVariant" Path="@UI.SelectionVariant#All"/>
+						<PropertyValue Property="PresentationVariant" Path="@UI.PresentationVariant#AlpDefault"/>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.SelectionPresentationVariant" Qualifier="ByCostCenter">
+					<Record>
+						<PropertyValue Property="Text" String="By Cost Center"/>
+						<PropertyValue Property="SelectionVariant" Path="@UI.SelectionVariant#All"/>
+						<PropertyValue Property="PresentationVariant" Path="@UI.PresentationVariant#ByCostCenter"/>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ID"/>
+							<PropertyValue Property="Label" String="Journal Entry Item"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CompanyCode"/>
+							<PropertyValue Property="Label" String="Company Code"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="FiscalYearPeriod"/>
+							<PropertyValue Property="Label" String="Fiscal Year Period"/>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#AmountCompanyCode"/>
+							<PropertyValue Property="Label" String="Amount in Company Code Currency"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="JrnlEntryItemObsoleteReason"/>
+							<PropertyValue Property="Label" String="Obsolete / Reversed"/>
+						</Record>
+					</Collection>
+				</Annotation>
+
+				<Annotation Term="UI.FieldGroup" Qualifier="General">
+					<Record>
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="Ledger"/>
+									<PropertyValue Property="Label" String="Ledger"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="LedgerFiscalYear"/>
+									<PropertyValue Property="Label" String="Fiscal Year"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="FiscalPeriod"/>
+									<PropertyValue Property="Label" String="Fiscal Period"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="ChartOfAccounts"/>
+									<PropertyValue Property="Label" String="Chart of Accounts"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="ControllingDebitCreditCode"/>
+									<PropertyValue Property="Label" String="Debit / Credit"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="AmountInTransactionCurrency"/>
+									<PropertyValue Property="Label" String="Amount in Transaction Currency"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="AmountInGlobalCurrency"/>
+									<PropertyValue Property="Label" String="Amount in Global Currency"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="SourceReferenceDocumentType"/>
+									<PropertyValue Property="Label" String="Source Document Type"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+
+				<Annotation Term="UI.HeaderFacets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#General"/>
+							<PropertyValue Property="Label" String="General Information"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#AmountCompanyCode"/>
+							<PropertyValue Property="Label" String="Amount in Company Code Currency"/>
+						</Record>
+					</Collection>
+				</Annotation>
+
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="ID" String="GeneralInformation"/>
+							<PropertyValue Property="Label" String="General Information"/>
+							<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#General"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="ID" String="CompanyCode"/>
+							<PropertyValue Property="Label" String="Company Code"/>
+							<PropertyValue Property="Target" AnnotationPath="to_CompanyCode/@UI.Identification"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="ID" String="CostCenter"/>
+							<PropertyValue Property="Label" String="Cost Center"/>
+							<PropertyValue Property="Target" AnnotationPath="to_CurrentCostCenter/@UI.Identification"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="ID" String="ProfitCenter"/>
+							<PropertyValue Property="Label" String="Profit Center"/>
+							<PropertyValue Property="Target" AnnotationPath="to_CurrentProfitCenter/@UI.Identification"/>
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="ID" String="GLAccount"/>
+							<PropertyValue Property="Label" String="G/L Account"/>
+							<PropertyValue Property="Target" AnnotationPath="to_GLAccountInChartOfAccounts/@UI.Identification"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+
+			
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/ID">
+				<Annotation Term="Common.Label" String="Journal Entry Item"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/CompanyCode">
+				<Annotation Term="Common.Label" String="Company Code"/>
+				<Annotation Term="Common.Text" Path="CompanyCodeName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Company Code"/>
+						<PropertyValue Property="CollectionPath" String="A_CompanyCode"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CompanyCode"/>
+									<PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CompanyCodeName"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/CostCenter">
+				<Annotation Term="Common.Label" String="Cost Center"/>
+				<Annotation Term="Common.Text" Path="CostCenterName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Cost Center"/>
+						<PropertyValue Property="CollectionPath" String="A_CostCenter"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CostCenter"/>
+									<PropertyValue Property="ValueListProperty" String="CostCenter"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ControllingArea"/>
+									<PropertyValue Property="ValueListProperty" String="ControllingArea"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CompanyCode"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/ProfitCenter">
+				<Annotation Term="Common.Label" String="Profit Center"/>
+				<Annotation Term="Common.Text" Path="ProfitCenterName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Profit Center"/>
+						<PropertyValue Property="CollectionPath" String="A_ProfitCenter"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ProfitCenter"/>
+									<PropertyValue Property="ValueListProperty" String="ProfitCenter"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AddressName"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/GLAccount">
+				<Annotation Term="Common.Label" String="G/L Account"/>
+				<Annotation Term="Common.Text" Path="GLAccountName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="G/L Account"/>
+						<PropertyValue Property="CollectionPath" String="A_GLAccountInChartOfAccounts"/>
+						<PropertyValue Property="SearchSupported" Bool="true"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="GLAccount"/>
+									<PropertyValue Property="ValueListProperty" String="GLAccount"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ChartOfAccounts"/>
+									<PropertyValue Property="ValueListProperty" String="ChartOfAccounts"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/Ledger">
+				<Annotation Term="Common.Label" String="Ledger"/>
+				<Annotation Term="Common.Text" Path="LedgerName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/LedgerFiscalYear">
+				<Annotation Term="Common.Label" String="Fiscal Year"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/FiscalYearPeriod">
+				<Annotation Term="Common.Label" String="Fiscal Year Period"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/FiscalPeriod">
+				<Annotation Term="Common.Label" String="Fiscal Period"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/ChartOfAccounts">
+				<Annotation Term="Common.Label" String="Chart of Accounts"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/ControllingDebitCreditCode">
+				<Annotation Term="Common.Label" String="Debit / Credit"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/AmountInCompanyCodeCurrency">
+				<Annotation Term="Common.Label" String="Amount in Company Code Currency"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/AmountInTransactionCurrency">
+				<Annotation Term="Common.Label" String="Amount in Transaction Currency"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/AmountInGlobalCurrency">
+				<Annotation Term="Common.Label" String="Amount in Global Currency"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/SourceReferenceDocumentType">
+				<Annotation Term="Common.Label" String="Source Document Type"/>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasicType/JrnlEntryItemObsoleteReason">
+				<Annotation Term="Common.Label" String="Obsolete / Reversed"/>
+				<Annotation Term="UI.ValueCriticality">
+					<Collection>
+						<Record>
+							<PropertyValue Property="Value" String="W"/>
+							<PropertyValue Property="Criticality" EnumMember="UI.CriticalityType/Negative"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_CompanyCodeType">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CompanyCode"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CompanyCodeName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CityName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Country"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Currency"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ChartOfAccounts"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ControllingArea"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_CostCenterType">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CostCenter"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ControllingArea"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CompanyCode"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Department"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CostCtrResponsiblePersonName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CityName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ProfitCenter"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_ProfitCenterType">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ProfitCenter"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="AddressName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CompanyCode"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ProfitCtrResponsiblePersonName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CityName"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Country"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Segment"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+
+			<Annotations Target="API_JOURNALENTRYITEMBASIC_SRV.A_GLAccountInChartOfAccountsType">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="GLAccount"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ChartOfAccounts"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="GLAccountGroup"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="GLAccountType"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="IsBalanceSheetAccount"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="IsProfitLossAccount"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

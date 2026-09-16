@@ -1,0 +1,14 @@
+{
+  "name": "mindtek-journalentry-monitor-alp",
+  "version": "1.0.0",
+  "description": "Read-only Fiori Elements Analytical List Page for SAP universal journal line items",
+  "private": true,
+  "scripts": {
+    "start": "ui5 serve --port 8082 --open index.html",
+    "generate-mockdata": "node scripts/generate-mockdata.js"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^3.9.0",
+    "ui5-middleware-livereload": "^3.4.0"
+  }
+}
