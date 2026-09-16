@@ -92,6 +92,69 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 	}
 
+	function requestUrl(resource) {
+		if (typeof resource === "string") {
+			return resource;
+		}
+		if (resource && resource.url) {
+			return resource.url;
+		}
+		return "";
+	}
+
+	function jsonResponse(oBody) {
+		return new Response(JSON.stringify(oBody), {
+			status: 200,
+			headers: {
+				"Content-Type": "application/json;charset=utf-8",
+				"DataServiceVersion": "2.0"
+			}
+		});
+	}
+
+	function installFetchInterceptor(oMockServer) {
+		if (!window.fetch || window.fetch._jemPatched) {
+			return;
+		}
+		var fnOriginalFetch = window.fetch.bind(window);
+		var sService = "/sap/opu/odata/sap/API_JOURNALENTRYITEMBASIC_SRV/";
+		window.fetch = function (resource, init) {
+			var sUrl = requestUrl(resource);
+			if (sUrl.indexOf(sService) === -1) {
+				return fnOriginalFetch(resource, init);
+			}
+			try {
+				var oUrl = new URL(sUrl, window.location.origin);
+				var sPath = oUrl.pathname;
+				if (sPath.indexOf("$metadata") !== -1) {
+					return fnOriginalFetch(resource, init);
+				}
+				if (sPath.indexOf("/$count") !== -1) {
+					var iCount = (oMockServer.getEntitySetData("A_JournalEntryItemBasic") || []).length;
+					return Promise.resolve(new Response(String(iCount), {
+						status: 200,
+						headers: { "Content-Type": "text/plain" }
+					}));
+				}
+				var aItems = oMockServer.getEntitySetData("A_JournalEntryItemBasic") || [];
+				var iSkip = parseInt(oUrl.searchParams.get("$skip") || "0", 10);
+				var sTop = oUrl.searchParams.get("$top");
+				var iTop = sTop ? parseInt(sTop, 10) : aItems.length;
+				var aSlice = aItems.slice(iSkip, iSkip + iTop);
+				return Promise.resolve(jsonResponse({
+					d: {
+						results: aSlice,
+						__count: String(aItems.length)
+					}
+				}));
+			} catch (oError) {
+				Log.error("Journal Entry Monitor fetch interceptor failed", oError);
+				return fnOriginalFetch(resource, init);
+			}
+		};
+		window.fetch._jemPatched = true;
+	}
+
 	return {
 		init: function () {
 			if (this._bStarted) {
@@ -120,6 +183,7 @@ sap.ui.define([
 			});
 
 			attachNavigationHandlers(oMockServer);
+			installFetchInterceptor(oMockServer);
 			oMockServer.start();
 			this._bStarted = true;
 			Log.info("Journal Entry Monitor mock server started at /sap/opu/odata/sap/API_JOURNALENTRYITEMBASIC_SRV/");
