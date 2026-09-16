@@ -5,9 +5,15 @@ html, body {
 
 .mindtek-app-brand {
 	flex: 0 0 auto;
+	min-height: 3.25rem;
 	border-bottom: 1px solid #d9d9d9;
 	background: #ffffff;
-	padding-left: 0.75rem;
+	padding: 0.25rem 0.75rem;
+}
+
+.mindtek-app-brand .sapMImg {
+	height: 2.5rem;
+	width: auto;
 }
 
 .mindtek-app-shell {

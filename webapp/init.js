@@ -21,8 +21,8 @@ sap.ui.define([
 				width: "100%",
 				content: [
 					new Image({
-						src: sap.ui.require.toUrl("mindtek/journalentry/monitor/img/mindtek-logo.jpg"),
-						height: "2.25rem",
+						src: sap.ui.require.toUrl("mindtek/journalentry/monitor/img/mindtek-logo.jpeg"),
+						height: "2.5rem",
 						densityAware: false,
 						decorative: false,
 						alt: "MindTek"
