@@ -38,8 +38,15 @@ sap.ui.define([
 	}
 
 	function loadDataOnEntry() {
-		var oFilterBar = this.getView().byId("template::SmartFilterBar");
+		var oView = this.getView();
+		var oFilterBar = oView.byId("template::SmartFilterBar");
+		var oTable = oView.byId("table");
+		if (oTable && oTable.setEnableAutoBinding) {
+			oTable.setEnableAutoBinding(true);
+		}
+		watchTableOnViewChange.call(this);
 		if (!oFilterBar || oFilterBar.data("jemAutoLoad")) {
+			ensureTableLoaded.call(this);
 			return;
 		}
 		oFilterBar.data("jemAutoLoad", true);
@@ -47,7 +54,8 @@ sap.ui.define([
 			if (typeof oFilterBar.search === "function") {
 				oFilterBar.search();
 			}
-		};
+			setTimeout(ensureTableLoaded.bind(this), 0);
+		}.bind(this);
 		if (oFilterBar.isInitialised && oFilterBar.isInitialised()) {
 			fnSearch();
 		} else if (oFilterBar.attachInitialized) {
@@ -55,6 +63,67 @@ sap.ui.define([
 		} else {
 			oFilterBar.attachEventOnce("initialise", fnSearch);
 		}
+		setTimeout(prebindTable.bind(this), 300);
+	}
+
+	function prebindTable() {
+		var oView = this.getView();
+		var oPriv = oView.getModel("_templPriv");
+		if (!oPriv) {
+			return;
+		}
+		var sView = oPriv.getProperty("/alp/contentView");
+		if (sView === "table" || sView === "charttable") {
+			ensureTableLoaded.call(this);
+			return;
+		}
+		oPriv.setProperty("/alp/contentView", "table");
+		ensureTableLoaded.call(this);
+		oPriv.setProperty("/alp/contentView", sView);
+	}
+
+	function watchTableOnViewChange() {
+		var oView = this.getView();
+		if (oView.data("jemViewWatch")) {
+			return;
+		}
+		oView.data("jemViewWatch", true);
+		oView.findAggregatedObjects(true, function (oControl) {
+			return oControl.isA && oControl.isA("sap.m.SegmentedButton");
+		}).forEach(function (oSegment) {
+			var aKeys = (oSegment.getItems() || []).map(function (oItem) {
+				return oItem.getKey && oItem.getKey();
+			});
+			if (aKeys.indexOf("table") < 0) {
+				return;
+			}
+			oSegment.attachSelectionChange(ensureTableLoaded.bind(this));
+		}.bind(this));
+	}
+
+	function ensureTableLoaded() {
+		var oView = this.getView();
+		var oPriv = oView.getModel("_templPriv");
+		var sView = oPriv && oPriv.getProperty("/alp/contentView");
+		if (sView !== "table" && sView !== "charttable") {
+			return;
+		}
+		var oTable = oView.byId("table");
+		if (!oTable || typeof oTable.rebindTable !== "function") {
+			return;
+		}
+		var oInner = oTable.getTable && oTable.getTable();
+		var oBinding = oInner && (oInner.getBinding("items") || oInner.getBinding("rows"));
+		if (oBinding) {
+			return;
+		}
+		if (oTable.setShowOverlay) {
+			oTable.setShowOverlay(false);
+		}
+		if (oTable.setEnableAutoBinding) {
+			oTable.setEnableAutoBinding(true);
+		}
+		oTable.rebindTable();
 	}
 
 	function enableMobileChartSelection() {
@@ -81,7 +150,62 @@ sap.ui.define([
 				});
 			}
 			oChart.attachSelectData(onChartSelectData.bind(this));
+			keepChartTypeOnPhone(oSmartChart);
 		}.bind(this));
+	}
+
+	function keepChartTypeOnPhone(oSmartChart) {
+		if (!Device.system.phone && !Device.system.tablet) {
+			return;
+		}
+		sap.ui.require([
+			"sap/m/OverflowToolbarLayoutData",
+			"sap/ui/mdc/chart/SelectionButton"
+		], function (OverflowToolbarLayoutData, SelectionButton) {
+			if (!SelectionButton.prototype._jemPhoneHeader) {
+				SelectionButton.prototype._jemPhoneHeader = true;
+				SelectionButton.prototype._updateHeader = function (oPopover) {
+					oPopover = oPopover || this.oPopover;
+					if (!oPopover) {
+						return;
+					}
+					var oBar = oPopover.getSubHeader && oPopover.getSubHeader();
+					if ((!oBar || !oBar.getContentMiddle) && oPopover.getContent) {
+						(oPopover.getContent() || []).some(function (oContent) {
+							if (oContent.getContentMiddle) {
+								oBar = oContent;
+								return true;
+							}
+							return false;
+						});
+					}
+					if (!oBar || !oBar.getContentMiddle) {
+						return;
+					}
+					var aMiddle = oBar.getContentMiddle();
+					var oSearchField = aMiddle[0];
+					var oSortBtn = aMiddle[1];
+					if (oSearchField && oSearchField.setVisible) {
+						oSearchField.setVisible(this.getSearchEnabled());
+						if (oSearchField.setValue) {
+							oSearchField.setValue("");
+						}
+					}
+					if (oSortBtn && oSortBtn.setVisible) {
+						oSortBtn.setVisible(this.getSortEnabled());
+					}
+					oBar.setVisible(this.getSearchEnabled() || this.getSortEnabled());
+				};
+			}
+			var oButton = sap.ui.core.Element.registry.get(oSmartChart.getId() + "-btnChartType");
+			if (!oButton || oButton.data("jemChartType")) {
+				return;
+			}
+			oButton.data("jemChartType", true);
+			oButton.setLayoutData(new OverflowToolbarLayoutData({
+				priority: "NeverOverflow"
+			}));
+		});
 	}
 
 	/**
