@@ -124,7 +124,10 @@
 						"qualifier": "AlpDefault",
 						"defaultFilterMode": "compact",
 						"autoHide": false,
-						"showGoButtonOnFilterBar": true,
+						"showGoButtonOnFilterBar": false,
+						"dataLoadSettings": {
+							"loadDataOnAppLaunch": "always"
+						},
 						"smartVariantManagement": true,
 						"defaultContentView": "charttable",
 						"multiSelect": true,
